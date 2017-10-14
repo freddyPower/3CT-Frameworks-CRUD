@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Gestión de personas</title>
+    </h:head>
+    <h:body>
+
+        <h:form id="formInsertar">
+            <p:panelGrid columns="4">
+
+                <p:outputLabel value="Nombre"/>
+                <p:inputText value="#{personaBean.persona.nombre}"/>
+
+                <p:outputLabel value="Apellido paterno"/>
+                <p:inputText value="#{personaBean.persona.apellidoPaterno}"/>
+
+                <p:outputLabel value="Apellido materno"/>
+                <p:inputText value="#{personaBean.persona.apellidoMaterno}"/>
+
+                <p:outputLabel for="nacimiento" value="Nacimiento"/>                
+                <p:calendar id="nacimiento" value="#{personaBean.persona.nacimiento}">
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>  
+                </p:calendar>                
+
+            </p:panelGrid>
+            <!--<p:commandButton actionListener="#{personaBean.insertar()}" value="Ingresar persona"/>-->
+            <p:commandButton actionListener="#{personaBean.insertar()}" value="Ingresar persona" update=":formMostrar"/>
+        </h:form>
+
+        <h:form id="formMostrar">
+
+            <p:dataTable var="per" value="#{personaBean.listaPersonas}"
+                         emptyMessage="No hay personas disponibles"
+                         paginator="true" rows="10" paginatorPosition="top"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink}
+                         {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10">
+
+                <p:column headerText="Id">
+                    <h:outputText value="#{per.idPersona}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{per.nombre}"/>
+                </p:column>
+                <p:column headerText="Apellido paterno">
+                    <h:outputText value="#{per.apellidoPaterno}"/>
+                </p:column>
+                <p:column headerText="Apellido materno">
+                    <h:outputText value="#{per.apellidoMaterno}"/>
+                </p:column>
+                <p:column headerText="Fecha nacimiento">
+                    <h:outputText value="#{per.nacimiento}"/>
+                </p:column>
+                <p:column headerText="Modificar">
+                    <p:commandButton value="Modificar" oncomplete="PF('dlgmodificar').show();" update=":formModificar">
+                        <f:setPropertyActionListener target="#{personaBean.persona}" value="#{per}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column headerText="Eliminar">
+                    <p:commandButton value="Eliminar" oncomplete="PF('dlgeliminar').show();">
+                        <f:setPropertyActionListener target="#{personaBean.persona}" value="#{per}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+        </h:form>
+
+        <p:dialog id="dlg" header="Modificar persona" showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgmodificar" modal="true" resizable="false" minWidth="200">
+            <h:form id="formModificar">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Nombre"/>
+                    <p:inputText value="#{personaBean.persona.nombre}"/>
+
+                    <p:outputLabel value="Apellido paterno"/>
+                    <p:inputText value="#{personaBean.persona.apellidoPaterno}"/>
+
+                    <p:outputLabel value="Apellido materno"/>
+                    <p:inputText value="#{personaBean.persona.apellidoMaterno}"/>
+
+                    <p:outputLabel for="nacimiento" value="Nacimiento"/>                
+                    <p:calendar id="nacimiento" value="#{personaBean.persona.nacimiento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"/>  
+                    </p:calendar>                
+                </p:panelGrid>
+                <p:commandButton value="Modificar" update=":formMostrar"
+                                 actionListener="#{personaBean.modificar()}"
+                                 oncomplete="PF('dlgmodificar').hide();" />
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="dlg2" header="Eliminar persona" showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgeliminar" modal="true" resizable="false" minWidth="200">
+            <h:form id="formEliminar">
+                <h:outputText value="Desea eliminar el registro"/>
+                <p:commandButton value="Si" update=":formMostrar"
+                                 actionListener="#{personaBean.eliminar()}"
+                                 oncomplete="PF('dlgeliminar').hide();" />
+                <p:commandButton value="No" onclick="PF('dlg2').hide();"/>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>
+
